@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.RandomAccess;
 
 import org.bson.Document;
 
@@ -28,15 +27,17 @@ public class mongoTest {
 	static List<Document> customerList = new ArrayList<>();
 	static Document order;
 	private static int key = 0;
-	private static MongoClient mongoClient = MongoClients.create("mongodb://gia:prodata@localhost:27017");
-	private static MongoDatabase database = mongoClient.getDatabase("Customer");
-	private static MongoCollection<Document> collection = database.getCollection("customners");
+	private static MongoClient mongoClient = MongoClients.create("mongodb://mongoadmin:mongoadmin@localhost:27017");
+	private static MongoDatabase databaseCustomer = mongoClient.getDatabase("Customers");
+	private static MongoDatabase database = mongoClient.getDatabase("Modell");
+	private static MongoCollection<Document> collectionCustomer = databaseCustomer.getCollection("customners");
+	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
 
 	public static void main(String[] args) {
-		// collection.deleteMany(new Document());
-		// orders.deleteMany(new Document());
-		// connectMongoDb();
+		collection.deleteMany(new Document());
+		orders.deleteMany(new Document());
+		connectMongoDb();
 		connectMongoDbCustomer();
 	}
 
@@ -60,7 +61,7 @@ public class mongoTest {
 		for (int i = 0; i < MAX_MODELLS; i++) {
 			customerList.add(createCustomers());			
 		}
-		collection.insertMany(customerList);
+		collectionCustomer.insertMany(customerList);
 	}
 
 	public void createDocuments() {

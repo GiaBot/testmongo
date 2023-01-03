@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,13 +15,15 @@ public class Customer {
     private String address;
     private int PLZ;
     private String city;
+    private Invoice invoice;
 
-    public Customer(String firstName, String lastName, String address, int PLZ, String city) {
+    public Customer(String firstName, String lastName, String address, int PLZ, String city, Invoice invoice) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.PLZ = PLZ;
         this.city = city;
+        this.invoice = invoice;
     }
 
     public Customer() {
@@ -71,6 +75,46 @@ public class Customer {
 
     public String getCity() {
         return city;
+    }
+
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
+    static class Invoice {
+
+        private int innr;
+        private int ordernr;
+        private List<String> order;
+
+        public int getInnr() {
+            return innr;
+        }
+
+        public void setInnr(int innr) {
+            this.innr = innr;
+        }
+
+        public List<String> getOrder() {
+            return order;
+        }
+
+        public void setOrder(List<String> order) {
+            this.order = order;
+        }
+
+        public int getOrdernr() {
+            return ordernr;
+        }
+
+        public void setOrdernr(int ordernr) {
+            this.ordernr = ordernr;
+        }
+
     }
 
 }
