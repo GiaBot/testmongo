@@ -30,12 +30,12 @@ public class CustomerController {
     }
 
     @PostMapping("addCustomer")
-    public Customer addCustomer(Customer customer) {
+    public Customer addCustomer(@RequestBody Customer customer) {
         return repository.save(customer);
     }
 
     @PostMapping("addCustomers")
-    public List<Customer> addCustomers(List<Customer> customers) {
+    public List<Customer> addCustomers(@RequestBody List<Customer> customers) {
         return repository.saveAll(customers);
     }
 
@@ -79,8 +79,8 @@ public class CustomerController {
         repository.deleteById(id);
     }
 
-    @DeleteMapping("deleteAll")
-    public void deleteAll() {
+    @DeleteMapping("deleteAllCustomers")
+    public void deleteAllCustomers() {
         repository.deleteAll();
     }
 

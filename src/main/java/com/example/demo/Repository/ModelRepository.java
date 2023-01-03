@@ -9,18 +9,18 @@ import com.example.demo.models.Model;
 
 public interface ModelRepository extends MongoRepository<Model, String> {
 
-    public List<Model> findAll();
+    // public List<Model> findAll();
 
-    public Optional<Model> findById(String id);
+    // public Optional<Model> findById(String id);
 
-    public List<Model> findByName(String name);
+    // public List<Model> findByName(String name);
 
-    public List<Model> findBySeason(String season);
+    // public List<Model> findBySeason(String season);
 
-    public List<Model> findBySize(String size);
+    // public List<Model> findBySize(String size);
 
-    public List<Model> findByColor(String color);
+    // public List<Model> findByColor(String color);
 
-    public List<Model> findByPrice(double price);
+    // public List<Model> findByPrice(double price);
     
 }
