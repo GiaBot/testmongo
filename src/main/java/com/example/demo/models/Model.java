@@ -3,7 +3,7 @@ package com.example.demo.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "modellCollection")
+@Document(collection = "modells")
 public class Model {
     
     @Id
@@ -12,9 +12,9 @@ public class Model {
     private String size;
     private String season;
     private String color;
-    private double price;
+    private float price;
 
-    public Model(String name, String size, String season, String color, double price) {
+    public Model(String name, String size, String season, String color, float price) {
         this.name = name;
         this.size = size;
         this.season = season;
@@ -66,11 +66,11 @@ public class Model {
         return color;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 

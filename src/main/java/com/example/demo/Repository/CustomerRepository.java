@@ -1,36 +1,27 @@
 package com.example.demo.Repository;
 
-// import java.util.List;
+import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-// import org.springframework.http.ResponseEntity;
+import org.springframework.data.mongodb.repository.Query;
 
 import com.example.demo.models.Customer;
 
 public interface CustomerRepository extends MongoRepository<Customer, String> {
 
-    // public List<Customer> findAll();
+    @Query("{firstname:'?0'}")
+    public Customer findCustomerByName(String firstName);
 
-    // public ResponseEntity<Customer> findByFirstName(String firstName);
+    @Query("{lastname:'?0'}")
+    public List<Customer> findCustomerByLastName(String lastName);
+
+    @Query(value="{city:'?0'}", fields="{'firstname':1, 'lastname':1, 'city':1}")
+    public List<Customer> filterCity(String city);
+
+    @Query("{plz:?0}")
+    public List<Customer> filterPLZ(int plz);
     
-    // public ResponseEntity<Customer> findByLastName(String lastName);
-
-    // public ResponseEntity<Customer> findByAddress(String Address);
-
-    // public ResponseEntity<Customer> findByPLZ(int PLZ);
-
-    // public ResponseEntity<Customer> findByCity(String city);
-
-    // public Customer save(Customer customer);
-
-    // public Customer update(Customer customer);
-
-    // public List<Customer> update(List<Customer> custumers);
-
-    // public List<Customer> saveAll(List<Customer> customers);
-
-    // public void delete(String id);
-
-    // public void deleteAll();
+    @Query("{address:'?0'}")
+    public List<Customer> filterAddress(String address);
 
 }

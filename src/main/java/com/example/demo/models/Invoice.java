@@ -10,6 +10,7 @@ public class Invoice {
     int ordernr;
     Customer customer;
     Model orders;
+    // int sum;
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -50,4 +51,12 @@ public class Invoice {
     public Model getOrders() {
         return orders;
     }
+
+    // public int getSum() {
+    //     return sum;
+    // }
+
+    // public void setSum(int sum) {
+    //     this.sum = sum;
+    // }
 }

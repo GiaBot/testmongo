@@ -3,10 +3,9 @@ package com.example.demo.controller;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Arrays.asList;
-
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,16 +13,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Repository.CustomerRepository;
 import com.example.demo.models.Customer;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
 @RestController
 @RequestMapping("/api")
 public class CustomerController {
-    
+
     private final CustomerRepository repository;
+    private MongoClient client = MongoClients.create(MongoClientSettings.builder()
+    .applyConnectionString(new ConnectionString("mongodb://mongoadmin:mongoadmin@localhost:27017/"))
+    .build());
+    private MongoTemplate mongoTemplate = new MongoTemplate(client, "Test");
 
     CustomerController(CustomerRepository repository) {
         this.repository = repository;
@@ -39,35 +47,50 @@ public class CustomerController {
         return repository.saveAll(customers);
     }
 
-    @GetMapping("getCustomerFirstName")
-    public List<Customer> getCustomerByFirstName(@RequestBody String firstName) {
-        List<String> customerNames = asList(firstName.split(","));
-        return repository.findAllById(customerNames);
-    }
-
     @GetMapping("customerId/{id}")
     public Optional<Customer> getCustomerById(@PathVariable String id) {
         return repository.findById(id);
     }
 
-    // @GetMapping("getCustomerLastName")
-    // public List<Customer> getCustomerByLastName(@RequestBody String lastName) {
-    //     List<String> customerNames = asList(lastName.split(","));
-    //     return repository.findAllById(customerNames);
-    // }
+    @GetMapping("customerFirstName")
+    public List<Customer> findByCustomerByName(@RequestParam String firstName) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("firstName").is(firstName));
+        List<Customer> customer = mongoTemplate.find(query, Customer.class);
+        return customer;
+    }
 
-    // @GetMapping("getCutomerPLZ")
-    // public ResponseEntity<ResponseEntity<Customer>> getCustomerByPLZ(@RequestBody int PLZ) {
-    //     ResponseEntity<Customer> customers = repository.findByPLZ(PLZ);
-    //     if (customers == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    //     return ResponseEntity.ok(customers);
-    // }
+    @GetMapping("customerLastName")
+    public List<Customer> findByCustomerByLastName(@RequestParam String lastName) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("lastName").is(lastName));
+        List<Customer> customer = mongoTemplate.find(query, Customer.class);
+        return customer;
+    }
 
-    // @GetMapping("getCustomerCity")
-    // public List<Customer> getCustomerByCity(@RequestBody String city) {
-    //     List<String> cities = asList(city.split(","));
-    //     return repository.findAllById(cities);
-    // }
+    @GetMapping("customerCity")
+    public List<Customer> getCustomersByCity(@RequestParam String city) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("city").is(city));
+        List<Customer> customer = mongoTemplate.find(query, Customer.class);
+        return customer;
+    }
+
+    @GetMapping("customerPlz")
+    public List<Customer> getCustomersByPlz(@RequestParam int plz) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("plz").is(plz));
+        List<Customer> customer = mongoTemplate.find(query, Customer.class);
+        return customer;
+    }
+
+    @GetMapping("customerAddress")
+    public List<Customer> getCustomerByAddress(@RequestParam String address) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("address").is(address));
+        List<Customer> customer = mongoTemplate.find(query, Customer.class);
+        return customer;
+    }
 
     @GetMapping("getAllCustomers")
     public List<Customer> getAllCustomers() {

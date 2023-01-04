@@ -140,6 +140,36 @@ public class CustomerDTO implements CustomerRepository{
         
     }
 
+    @Override
+    public Customer findCustomerByName(String firstName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<Customer> findCustomerByLastName(String lastName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<Customer> filterCity(String city) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<Customer> filterPLZ(int plz) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<Customer> filterAddress(String address) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     // @Override
     // public ResponseEntity<Customer> findByFirstName(String firstName) {
     //     return null;

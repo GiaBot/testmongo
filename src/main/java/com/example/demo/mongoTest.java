@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.bson.Document;
+// import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Eq;
+// import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoClient;
@@ -25,20 +27,23 @@ public class mongoTest {
 	static List<Document> list = new ArrayList<>();
 	static List<Document> orderList = new ArrayList<>();
 	static List<Document> customerList = new ArrayList<>();
+	static List<Document> invoiceList = new ArrayList<>();
 	static Document order;
 	private static int key = 0;
 	private static MongoClient mongoClient = MongoClients.create("mongodb://mongoadmin:mongoadmin@localhost:27017");
-	private static MongoDatabase databaseCustomer = mongoClient.getDatabase("Customers");
-	private static MongoDatabase database = mongoClient.getDatabase("Modell");
-	private static MongoCollection<Document> collectionCustomer = databaseCustomer.getCollection("customners");
+	private static MongoDatabase database = mongoClient.getDatabase("Test");
+	private static MongoCollection<Document> collectionCustomer = database.getCollection("customners");
 	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
+	private static MongoCollection<Document> invoices = database.getCollection("invoices");
 
 	public static void main(String[] args) {
 		collection.deleteMany(new Document());
 		orders.deleteMany(new Document());
-		connectMongoDb();
+		collectionCustomer.deleteMany(new Document());
+		invoices.deleteMany(new Document());
 		connectMongoDbCustomer();
+		connectMongoDb();
 	}
 
 
@@ -50,6 +55,7 @@ public class mongoTest {
 		collection.insertMany(list);
 		createOrders();
 		orders.insertMany(orderList);
+		invoices.insertMany(invoiceList);
 		// for(int i = 0; i < MAX_ORDERS; i++) {
 		// 	AggregateIterable<Document> test = collection.aggregate(Arrays.asList(Aggregates.sample(generateRndNr(1, 11)), 
 		// 	Aggregates.out("orders")));
@@ -86,6 +92,7 @@ public class mongoTest {
 			doc.append("order", key);
 			doc.append("modells", collection.aggregate(Arrays.asList(Aggregates.sample(nr))));
 			orderList.add(doc);
+			invoiceList.add(createInvoice());
 			key++;
 			// if (i % 100 == 0 || i == MAX_ORDERS - 1) {
 			// 	orders.insertMany(orderList);
@@ -126,14 +133,14 @@ public class mongoTest {
 			case 1:
 			doc.append("size", new BasicDBObject(sizeOne, rPrice())
 					.append(noDuplicateSize(sizeOne, sizeTwo), rPrice()))
-				.append("color", new BasicDBObject(colorOne, rPrice())
-					.append(noDuplicateColor(colorOne, colorTwo), rPrice()));
+					.append("color", new BasicDBObject(sizeOne, colorOne)
+					.append(sizeTwo, colorTwo));
 					return doc;
 			case 2:
 			doc.append("size", new BasicDBObject(sizeOne, rPrice())
 					.append(noDuplicateSize(sizeOne, sizeTwo), rPrice()))
-				.append("color", new BasicDBObject(colorOne, rPrice())
-					.append(noDuplicateColor(colorOne, colorTwo), rPrice()))
+				.append("color", new BasicDBObject(sizeOne, colorOne)
+					.append(sizeTwo, colorTwo))
 				.append("pattern", rPattern());
 		}
 		return doc;
@@ -141,12 +148,22 @@ public class mongoTest {
 
 	public static Document createCustomers() {
 		Document doc = new Document();
-		doc.append("firstname", randomString())
-			.append("lastname", randomString())
+		doc.append("firstName", randomString())
+			.append("lastName", randomString())
 			.append("address", randomString() + " Street")
 			.append("PLZ",generateRndNr(1, 10000))
 			.append("city", randomString());
 		
+		return doc;
+	}
+
+	public static Document createInvoice() {
+		Document doc = new Document();
+		doc.append("invnr", generateRndNr(0, 100000))
+			.append("ordernr", key)
+			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))))
+			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
+			// .append("sum", orders.find(eq("order", key)));
 		return doc;
 	}
 
