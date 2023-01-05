@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
-// import org.springframework.http.ResponseEntity;
 
 import com.example.demo.Repository.CustomerRepository;
 import com.example.demo.models.Customer;
@@ -137,102 +136,6 @@ public class CustomerDTO implements CustomerRepository{
     @Override
     public void deleteAll() {
         repository.deleteAll();
-        
     }
-
-    @Override
-    public Customer findCustomerByName(String firstName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Customer> findCustomerByLastName(String lastName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Customer> filterCity(String city) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Customer> filterPLZ(int plz) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Customer> filterAddress(String address) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    // @Override
-    // public ResponseEntity<Customer> findByFirstName(String firstName) {
-    //     return null;
-    // }
-
-    // @Override
-    // public ResponseEntity<Customer> findByLastName(String lastName) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public ResponseEntity<Customer> findByAddress(String Address) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public ResponseEntity<Customer> findByPLZ(int PLZ) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public ResponseEntity<Customer> findByCity(String city) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public Customer save(Customer customer) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public Customer update(Customer customer) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public List<Customer> update(List<Customer> custumers) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public List<Customer> saveAll(List<Customer> customers) {
-    //     // TODO Auto-generated method stub
-    //     return null;
-    // }
-
-    // @Override
-    // public void delete(String id) {
-    //     // TODO Auto-generated method stub
-        
-    // }
-
-    // @Override
-    // public void deleteAll() {
-    //     // TODO Auto-generated method stub
-        
-    // }
     
 }

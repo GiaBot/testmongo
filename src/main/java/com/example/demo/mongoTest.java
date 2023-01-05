@@ -88,8 +88,8 @@ public class mongoTest {
 		for (int i = 0; i < MAX_ORDERS; i++) {
 			Document doc = new Document();
 			int nr = generateRndNr(1, 11);
-			doc.append("nrModells", nr);
-			doc.append("order", key);
+			doc.append("nrModells", String.valueOf(nr));
+			doc.append("order", String.valueOf(key));
 			doc.append("modells", collection.aggregate(Arrays.asList(Aggregates.sample(nr))));
 			orderList.add(doc);
 			invoiceList.add(createInvoice());
@@ -151,7 +151,7 @@ public class mongoTest {
 		doc.append("firstName", randomString())
 			.append("lastName", randomString())
 			.append("address", randomString() + " Street")
-			.append("PLZ",generateRndNr(1, 10000))
+			.append("PLZ",String.valueOf(generateRndNr(1, 10000)))
 			.append("city", randomString());
 		
 		return doc;
@@ -159,8 +159,8 @@ public class mongoTest {
 
 	public static Document createInvoice() {
 		Document doc = new Document();
-		doc.append("invnr", generateRndNr(0, 100000))
-			.append("ordernr", key)
+		doc.append("invnr", String.valueOf(generateRndNr(0, 100000)))
+			.append("ordernr", String.valueOf(key))
 			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))))
 			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
 			// .append("sum", orders.find(eq("order", key)));

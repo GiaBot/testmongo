@@ -11,10 +11,10 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String address;
-    private int PLZ;
+    private String PLZ;
     private String city;
 
-    public Customer(String firstName, String lastName, String address, int PLZ, String city) {
+    public Customer(String firstName, String lastName, String address, String PLZ, String city) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -57,11 +57,11 @@ public class Customer {
         return address;
     }
 
-    public void setPLZ(int PLZ) {
+    public void setPLZ(String PLZ) {
         this.PLZ = PLZ;
     }
 
-    public int getPLZ() {
+    public String getPLZ() {
         return PLZ;
     }
 

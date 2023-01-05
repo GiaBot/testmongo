@@ -77,7 +77,7 @@ public class CustomerController {
     }
 
     @GetMapping("customerPlz")
-    public List<Customer> getCustomersByPlz(@RequestParam int plz) {
+    public List<Customer> getCustomersByPlz(@RequestParam String plz) {
         Query query = new Query();
         query.addCriteria(Criteria.where("plz").is(plz));
         List<Customer> customer = mongoTemplate.find(query, Customer.class);
@@ -116,4 +116,5 @@ public class CustomerController {
     public List<Customer> customers(@RequestBody List<Customer> customers) {
         return repository.saveAll(customers);
     }
+
 }
