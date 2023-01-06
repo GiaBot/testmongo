@@ -13,14 +13,14 @@ public class Invoice {
     private String invNr;
     private String orderNr;
     private ArrayList<Customer> customer;
-    private Orders orders;
+    private ArrayList<Orders> order;
     // int sum;
 
-    public Invoice(String invNr, String orderNr, ArrayList<Customer> customer, Orders orders) {
+    public Invoice(String invNr, String orderNr, ArrayList<Customer> customer, ArrayList<Orders> order) {
         this.invNr = invNr;
         this.orderNr = orderNr;
         this.customer = customer;
-        this.orders = orders;
+        this.order = order;
     }
 
     public Invoice() {
@@ -59,12 +59,12 @@ public class Invoice {
         return orderNr;
     }
 
-    public void setOrders(Orders orders) {
-        this.orders = orders;
+    public void setOrders(ArrayList<Orders> order) {
+        this.order = order;
     }
 
-    public Orders getOrders() {
-        return orders;
+    public ArrayList<Orders> getOrders() {
+        return order;
     }
 
     // public int getSum() {

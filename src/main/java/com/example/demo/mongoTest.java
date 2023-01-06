@@ -162,10 +162,10 @@ public class mongoTest {
 
 	public static Document createInvoice() {
 		Document doc = new Document();
-		doc.append("invnr", String.valueOf(generateRndNr(0, 100000)))
-			.append("ordernr", String.valueOf(key))
-			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))));
-			// .append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
+		doc.append("invNr", String.valueOf(generateRndNr(0, 100000)))
+			.append("orderNr", String.valueOf(key))
+			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))))
+			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
 			// .append("sum", orders.find(eq("order", key)));
 		return doc;
 	}
