@@ -9,16 +9,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Invoice {
     
     @Id
-    String id;
-    String invnr;
-    String ordernr;
-    ArrayList<Customer> customer;
-    Orders orders;
+    private String id;
+    private String invNr;
+    private String orderNr;
+    private ArrayList<Customer> customer;
+    private Orders orders;
     // int sum;
 
-    public Invoice(String invnr, String ordernr, ArrayList<Customer> customer, Orders orders) {
-        this.invnr = invnr;
-        this.ordernr = ordernr;
+    public Invoice(String invNr, String orderNr, ArrayList<Customer> customer, Orders orders) {
+        this.invNr = invNr;
+        this.orderNr = orderNr;
         this.customer = customer;
         this.orders = orders;
     }
@@ -43,20 +43,20 @@ public class Invoice {
         return id;
     }
 
-    public void setInvnr(String invnr) {
-        this.invnr = invnr;
+    public void setInvNr(String invNr) {
+        this.invNr = invNr;
     }
 
-    public String getInvnr() {
-        return invnr;
+    public String getInvNr() {
+        return invNr;
     }
 
-    public void setOrdernr(String ordernr) {
-        this.ordernr = ordernr;
+    public void setOrderNr(String orderNr) {
+        this.orderNr = orderNr;
     }
 
-    public String getOrdernr() {
-        return ordernr;
+    public String getOrderNr() {
+        return orderNr;
     }
 
     public void setOrders(Orders orders) {

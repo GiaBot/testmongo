@@ -107,4 +107,6 @@ public class InvoiceController {
     public List<Invoice> addManyInvoices(@RequestBody List<Invoice> invoices) {
         return repository.saveAll(invoices);
     }
+
+    //TO-DO: Sum of the modells in the order
 }

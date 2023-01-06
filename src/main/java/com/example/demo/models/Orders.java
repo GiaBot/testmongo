@@ -1,6 +1,6 @@
 package com.example.demo.models;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,12 +10,12 @@ public class Orders {
     
     @Id
     private String id;
-    private String nrModells;
+    private String amountModells;
     private String order;
-    private ArrayList<Model> modells;
+    private List<Model> modells;
 
-    public Orders(String nrModells, String order, ArrayList<Model> modells) {
-        this.nrModells = nrModells;
+    public Orders(String amountModells, String order, List<Model> modells) {
+        this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
     }
@@ -40,20 +40,20 @@ public class Orders {
         this.id = id;
     }
 
-    public ArrayList<Model> getModells() {
+    public List<Model> getModells() {
         return modells;
     }
 
-    public void setModells(ArrayList<Model> modells) {
+    public void setModells(List<Model> modells) {
         this.modells = modells;
     }
 
-    public String getNrModells() {
-        return nrModells;
+    public String getAmountModells() {
+        return amountModells;
     }
 
-    public void setNrModells(String nrModells) {
-        this.nrModells = nrModells;
+    public void setAmountModells(String amountModells) {
+        this.amountModells = amountModells;
     }
 
 }
