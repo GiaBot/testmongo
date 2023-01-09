@@ -13,11 +13,13 @@ public class Orders {
     private String amountModells;
     private String order;
     private List<Model> modells;
+    private float sum;
 
-    public Orders(String amountModells, String order, List<Model> modells) {
+    public Orders(String amountModells, String order, List<Model> modells, float sum) {
         this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
+        this.sum = sum;
     }
 
     public Orders() {
@@ -56,4 +58,11 @@ public class Orders {
         this.amountModells = amountModells;
     }
 
+    public float getSum() {
+        return sum;
+    }
+
+    public void setSum(float sum) {
+        this.sum = sum;
+    }
 }

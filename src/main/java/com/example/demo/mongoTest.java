@@ -2,15 +2,16 @@ package com.example.demo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import org.bson.Document;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -29,6 +30,7 @@ public class mongoTest {
 	static List<Document> orderList = new ArrayList<>();
 	static List<Document> customerList = new ArrayList<>();
 	static List<Document> invoiceList = new ArrayList<>();
+	static Document test;
 	static Document order;
 	private static int key = 0;
 	private static MongoClient mongoClient = MongoClients.create("mongodb://mongoadmin:mongoadmin@localhost:27017");
@@ -37,7 +39,6 @@ public class mongoTest {
 	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
-	private static MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, "Test");
 
 	public static void main(String[] args) {
 		collection.deleteMany(new Document());
@@ -96,6 +97,7 @@ public class mongoTest {
 			doc.append("amountModells", String.valueOf(nr));
 			doc.append("order", String.valueOf(key));
 			doc.append("modells", collection.aggregate(Arrays.asList(Aggregates.sample(nr))));
+			// doc.append("sum", getSumOfInvoice(doc));
 			orderList.add(doc);
 			invoiceList.add(createInvoice());
 			key++;
@@ -129,21 +131,19 @@ public class mongoTest {
 		String sizeTwo = rSize();
 		String colorOne = rColor();
 		String colorTwo = rColor();
-		int priceOne = rPrice();
-		int priceTwo = rPrice();
-		int sum = priceOne + priceTwo;
+		float priceOne = rPrice();
+		float priceTwo = rPrice();
+		float sum = priceOne + priceTwo;
 		int r = generateRndNr(0, 3);
 		switch(r) {
 			case 0:
 			doc.append("size", new BasicDBObject(sizeOne, priceOne)
 					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo));
-					return doc;
 			case 1:
 			doc.append("size", new BasicDBObject(sizeOne, priceOne)
 					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
 					.append("color", new BasicDBObject(sizeOne, colorOne)
 					.append(sizeTwo, colorTwo));
-					return doc;
 			case 2:
 			doc.append("size", new BasicDBObject(sizeOne, priceOne)
 					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
@@ -171,20 +171,14 @@ public class mongoTest {
 		doc.append("invNr", String.valueOf(generateRndNr(0, 100000)))
 			.append("orderNr", String.valueOf(key))
 			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))))
-			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))))
-			.append("sum", "");
+			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
 		return doc;
 	}
 
 	public static float getSumOfInvoice(Document doc) {
-		int sum = 0;
-		Query query = new Query();
-		for (Document docu : invoiceList) {
-			if (doc.get("price") instanceof Integer) {
-				sum += (int) doc.get("price");
-			}
-		}
-		return 0;
+		float sum = 0;
+		//db.orders.find({}, {"modells.price":1})
+		return sum;
 	}
 
 	public static String rName() {
@@ -216,8 +210,8 @@ public class mongoTest {
 		return pattern;
 	}
 
-	public static int rPrice() {
-		int price = generateRndNr(0, 100);
+	public static float rPrice() {
+		float price = generateRndNr(1, 100);
 		return price;
 	}
 

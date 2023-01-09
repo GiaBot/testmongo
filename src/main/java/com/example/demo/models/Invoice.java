@@ -14,7 +14,6 @@ public class Invoice {
     private String orderNr;
     private ArrayList<Customer> customer;
     private ArrayList<Orders> order;
-    // int sum;
 
     public Invoice(String invNr, String orderNr, ArrayList<Customer> customer, ArrayList<Orders> order) {
         this.invNr = invNr;
@@ -67,11 +66,4 @@ public class Invoice {
         return order;
     }
 
-    // public int getSum() {
-    //     return sum;
-    // }
-
-    // public void setSum(int sum) {
-    //     this.sum = sum;
-    // }
 }
