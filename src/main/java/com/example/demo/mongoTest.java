@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Random;
 
 import org.bson.Document;
-// import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Eq;
-// import static com.mongodb.client.model.Filters.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoClient;
@@ -36,6 +37,7 @@ public class mongoTest {
 	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
+	private static MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, "Test");
 
 	public static void main(String[] args) {
 		collection.deleteMany(new Document());
@@ -127,25 +129,29 @@ public class mongoTest {
 		String sizeTwo = rSize();
 		String colorOne = rColor();
 		String colorTwo = rColor();
+		int priceOne = rPrice();
+		int priceTwo = rPrice();
+		int sum = priceOne + priceTwo;
 		int r = generateRndNr(0, 3);
 		switch(r) {
 			case 0:
-			doc.append("size", new BasicDBObject(sizeOne, rPrice())
-					.append(noDuplicateSize(sizeOne, sizeTwo), rPrice()));
+			doc.append("size", new BasicDBObject(sizeOne, priceOne)
+					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo));
 					return doc;
 			case 1:
-			doc.append("size", new BasicDBObject(sizeOne, rPrice())
-					.append(noDuplicateSize(sizeOne, sizeTwo), rPrice()))
+			doc.append("size", new BasicDBObject(sizeOne, priceOne)
+					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
 					.append("color", new BasicDBObject(sizeOne, colorOne)
 					.append(sizeTwo, colorTwo));
 					return doc;
 			case 2:
-			doc.append("size", new BasicDBObject(sizeOne, rPrice())
-					.append(noDuplicateSize(sizeOne, sizeTwo), rPrice()))
+			doc.append("size", new BasicDBObject(sizeOne, priceOne)
+					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
 				.append("color", new BasicDBObject(sizeOne, colorOne)
 					.append(sizeTwo, colorTwo))
 				.append("pattern", rPattern());
 		}
+		doc.append("price", sum);
 		return doc;
 	}
 
@@ -165,9 +171,20 @@ public class mongoTest {
 		doc.append("invNr", String.valueOf(generateRndNr(0, 100000)))
 			.append("orderNr", String.valueOf(key))
 			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))))
-			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
-			// .append("sum", orders.find(eq("order", key)));
+			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))))
+			.append("sum", "");
 		return doc;
+	}
+
+	public static float getSumOfInvoice(Document doc) {
+		int sum = 0;
+		Query query = new Query();
+		for (Document docu : invoiceList) {
+			if (doc.get("price") instanceof Integer) {
+				sum += (int) doc.get("price");
+			}
+		}
+		return 0;
 	}
 
 	public static String rName() {
@@ -199,8 +216,8 @@ public class mongoTest {
 		return pattern;
 	}
 
-	public static float rPrice() {
-		float price = generateRndNr(0, 100);
+	public static int rPrice() {
+		int price = generateRndNr(0, 100);
 		return price;
 	}
 
