@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -13,13 +14,13 @@ public class Orders {
     private String amountModells;
     private String order;
     private List<Model> modells;
-    private float sum;
+    private ArrayList<Float> totalPrice;
 
-    public Orders(String amountModells, String order, List<Model> modells, float sum) {
+    public Orders(String amountModells, String order, List<Model> modells, ArrayList<Float> totalPrice) {
         this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
-        this.sum = sum;
+        this.totalPrice = totalPrice;
     }
 
     public Orders() {
@@ -58,11 +59,11 @@ public class Orders {
         this.amountModells = amountModells;
     }
 
-    public float getSum() {
-        return sum;
+    public ArrayList<Float> gettotalPrice() {
+        return totalPrice;
     }
 
-    public void setSum(float sum) {
-        this.sum = sum;
+    public void settotalPrice(ArrayList<Float> totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

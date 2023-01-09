@@ -2,21 +2,22 @@ package com.example.demo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Map.Entry;
 
+import org.apache.catalina.Pipeline;
 import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
+import com.example.demo.models.Orders;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 
 public class mongoTest {
 	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Socken", "Pullover", "Jacke" };
@@ -33,12 +34,14 @@ public class mongoTest {
 	static Document test;
 	static Document order;
 	private static int key = 0;
+	private static int orderNr = 0;
 	private static MongoClient mongoClient = MongoClients.create("mongodb://mongoadmin:mongoadmin@localhost:27017");
 	private static MongoDatabase database = mongoClient.getDatabase("Test");
 	private static MongoCollection<Document> collectionCustomer = database.getCollection("customners");
 	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
+	private static MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, "Test");
 
 	public static void main(String[] args) {
 		collection.deleteMany(new Document());
@@ -57,8 +60,10 @@ public class mongoTest {
 		}
 		collection.insertMany(list);
 		createOrders();
+		updateAllOrders(orderList);
 		orders.insertMany(orderList);
 		invoices.insertMany(invoiceList);
+
 		// for(int i = 0; i < MAX_ORDERS; i++) {
 		// 	AggregateIterable<Document> test = collection.aggregate(Arrays.asList(Aggregates.sample(generateRndNr(1, 11)), 
 		// 	Aggregates.out("orders")));
@@ -175,10 +180,29 @@ public class mongoTest {
 		return doc;
 	}
 
-	public static float getSumOfInvoice(Document doc) {
-		float sum = 0;
+	public static void getSumOfOrder() {
 		//db.orders.find({}, {"modells.price":1})
-		return sum;
+		//db.orders.aggregate([{"$match": {"order": "0"}}, {"$unwind": "$modells"}, {"$group": {"_id": "$order", "totalprice": {"$sum": "$modells.price"}}}])
+		// doc.append("totalPrice", orders.aggregate(Arrays.asList(Aggregates.match(
+		// 				Filters.eq("order", String.valueOf(orderNr))), 
+		// 				Aggregates.unwind("$modells"), 
+		// 				Aggregates.group("§order", Accumulators.sum("price", 1)),
+		// 				Aggregates.merge("orders"))));
+		ArrayList<Document> pipeline = new ArrayList<>();
+		pipeline.add(Document.parse("{$match: {'order': '" + orderNr + "'}}"));
+		pipeline.add(Document.parse("{$unwind: '$modells'}"));
+		pipeline.add(Document.parse("{$group: {_id: '$order', 'totalPrice': {$sum: 'modells.price'}}}"));
+		pipeline.add(Document.parse("{$merge: 'orders', on: 'order', whenMatched: 'replace', whenNotMatched: 'discard'}"));
+		mongoTemplate.getDb().getCollection("orders", Orders.class)
+			.aggregate(pipeline)
+			.toCollection();
+		orderNr++;
+	}
+
+	public static void updateAllOrders(List<Document> list) {
+		for (int i = 0; i < list.size(); i++) {
+			getSumOfOrder();
+		}
 	}
 
 	public static String rName() {
