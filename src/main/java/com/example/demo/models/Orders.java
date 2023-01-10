@@ -1,7 +1,6 @@
 package com.example.demo.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,14 +12,12 @@ public class Orders {
     private String id;
     private String amountModells;
     private String order;
-    private List<Model> modells;
-    private ArrayList<Float> totalPrice;
+    private ArrayList<String> modells;
 
-    public Orders(String amountModells, String order, List<Model> modells, ArrayList<Float> totalPrice) {
+    public Orders(String amountModells, String order, ArrayList<String> modells) {
         this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
-        this.totalPrice = totalPrice;
     }
 
     public Orders() {
@@ -43,11 +40,11 @@ public class Orders {
         this.id = id;
     }
 
-    public List<Model> getModells() {
+    public ArrayList<String> getModells() {
         return modells;
     }
 
-    public void setModells(List<Model> modells) {
+    public void setModells(ArrayList<String> modells) {
         this.modells = modells;
     }
 
@@ -59,11 +56,4 @@ public class Orders {
         this.amountModells = amountModells;
     }
 
-    public ArrayList<Float> gettotalPrice() {
-        return totalPrice;
-    }
-
-    public void settotalPrice(ArrayList<Float> totalPrice) {
-        this.totalPrice = totalPrice;
-    }
 }

@@ -5,25 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.catalina.Pipeline;
 import org.bson.Document;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
-import com.example.demo.models.Orders;
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
 
 public class mongoTest {
 	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Socken", "Pullover", "Jacke" };
 	static String[] saisons = { "spring", "summer", "winter", "fall" };
 	static String[] sizes = { "S", "M", "L", "XL" };
-	static String[] colors = { "blue", "red", "green", "black", "grey"};
+	static String[] colors = { "blue", "red", "green", "black", "grey" };
 	static String[] patterns = { "plain", "stripes" };
 	private final static int MAX_MODELLS = 100;
 	private final static int MAX_ORDERS = 100;
@@ -31,6 +27,7 @@ public class mongoTest {
 	static List<Document> orderList = new ArrayList<>();
 	static List<Document> customerList = new ArrayList<>();
 	static List<Document> invoiceList = new ArrayList<>();
+	static List<Document> modellsList = new ArrayList<>();
 	static Document test;
 	static Document order;
 	private static int key = 0;
@@ -41,7 +38,6 @@ public class mongoTest {
 	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
-	private static MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, "Test");
 
 	public static void main(String[] args) {
 		collection.deleteMany(new Document());
@@ -52,34 +48,33 @@ public class mongoTest {
 		connectMongoDb();
 	}
 
-
-
 	public static void connectMongoDb() {
-		for(int i = 0; i < MAX_MODELLS; i++) {
+		for (int i = 0; i < MAX_MODELLS; i++) {
 			list.add(randomDoc(createDocument()));
 		}
 		collection.insertMany(list);
 		createOrders();
-		updateAllOrders(orderList);
 		orders.insertMany(orderList);
+		createInvoices();
 		invoices.insertMany(invoiceList);
 
 		// for(int i = 0; i < MAX_ORDERS; i++) {
-		// 	AggregateIterable<Document> test = collection.aggregate(Arrays.asList(Aggregates.sample(generateRndNr(1, 11)), 
-		// 	Aggregates.out("orders")));
+		// AggregateIterable<Document> test =
+		// collection.aggregate(Arrays.asList(Aggregates.sample(generateRndNr(1, 11)),
+		// Aggregates.out("orders")));
 		// }
-		
+
 	}
 
 	public static void connectMongoDbCustomer() {
 		for (int i = 0; i < MAX_MODELLS; i++) {
-			customerList.add(createCustomers());			
+			customerList.add(createCustomers());
 		}
 		collectionCustomer.insertMany(customerList);
 	}
 
 	public void createDocuments() {
-		for(int i = 0; i < MAX_MODELLS; i++) {
+		for (int i = 0; i < MAX_MODELLS; i++) {
 			list.add(randomDoc(createDocument()));
 		}
 	}
@@ -94,22 +89,24 @@ public class mongoTest {
 
 	public static void createOrders() {
 		for (int i = 0; i < MAX_ORDERS; i++) {
-			Document doc = new Document();
 			int nr = generateRndNr(1, 11);
-			// doc.append("info", new BasicDBObject("amountModells", String.valueOf(nr))
-			// 			.append("order", String .valueOf(key))
-			// 			.append("modells", collection.aggregate(Arrays.asList(Aggregates.sample(nr)))));
+			List<String> modellIds = new ArrayList<>();
+			Document doc = new Document();
+			AggregateIterable<Document> modellList = collection.aggregate(Arrays.asList(Aggregates.sample(nr)));
+			for (Document document : modellList) {
+				modellIds.add(document.get("_id").toString());
+			}
 			doc.append("amountModells", String.valueOf(nr));
 			doc.append("order", String.valueOf(key));
-			doc.append("modells", collection.aggregate(Arrays.asList(Aggregates.sample(nr))));
-			// doc.append("sum", getSumOfInvoice(doc));
+			doc.append("modells", modellIds);
 			orderList.add(doc);
-			invoiceList.add(createInvoice());
 			key++;
-			// if (i % 100 == 0 || i == MAX_ORDERS - 1) {
-			// 	orders.insertMany(orderList);
-			// 	orderList.clear();
-			// }
+		}
+	}
+
+	public static void createInvoices() {
+		for (int i = 0; i < MAX_MODELLS; i++) {
+			invoiceList.add(createInvoice());
 		}
 	}
 
@@ -140,21 +137,21 @@ public class mongoTest {
 		float priceTwo = rPrice();
 		float sum = priceOne + priceTwo;
 		int r = generateRndNr(0, 3);
-		switch(r) {
+		switch (r) {
 			case 0:
-			doc.append("size", new BasicDBObject(sizeOne, priceOne)
-					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo));
+				doc.append("size", new BasicDBObject(sizeOne, priceOne)
+						.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo));
 			case 1:
-			doc.append("size", new BasicDBObject(sizeOne, priceOne)
-					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
-					.append("color", new BasicDBObject(sizeOne, colorOne)
-					.append(sizeTwo, colorTwo));
+				doc.append("size", new BasicDBObject(sizeOne, priceOne)
+						.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
+						.append("color", new BasicDBObject(sizeOne, colorOne)
+								.append(sizeTwo, colorTwo));
 			case 2:
-			doc.append("size", new BasicDBObject(sizeOne, priceOne)
-					.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
-				.append("color", new BasicDBObject(sizeOne, colorOne)
-					.append(sizeTwo, colorTwo))
-				.append("pattern", rPattern());
+				doc.append("size", new BasicDBObject(sizeOne, priceOne)
+						.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
+						.append("color", new BasicDBObject(sizeOne, colorOne)
+								.append(sizeTwo, colorTwo))
+						.append("pattern", rPattern());
 		}
 		doc.append("price", sum);
 		return doc;
@@ -163,46 +160,36 @@ public class mongoTest {
 	public static Document createCustomers() {
 		Document doc = new Document();
 		doc.append("firstName", randomString())
-			.append("lastName", randomString())
-			.append("address", randomString() + " Street")
-			.append("PLZ",String.valueOf(generateRndNr(1, 10000)))
-			.append("city", randomString());
-		
+				.append("lastName", randomString())
+				.append("address", randomString() + " Street")
+				.append("PLZ", String.valueOf(generateRndNr(1, 10000)))
+				.append("city", randomString());
+
 		return doc;
 	}
 
 	public static Document createInvoice() {
+		Document docCustomer = new Document();
+		Document docOrder = new Document();
 		Document doc = new Document();
-		doc.append("invNr", String.valueOf(generateRndNr(0, 100000)))
-			.append("orderNr", String.valueOf(key))
-			.append("customer", collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1))))
-			.append("order", orders.aggregate(Arrays.asList(Aggregates.sample(1))));
-		return doc;
-	}
-
-	public static void getSumOfOrder() {
-		//db.orders.find({}, {"modells.price":1})
-		//db.orders.aggregate([{"$match": {"order": "0"}}, {"$unwind": "$modells"}, {"$group": {"_id": "$order", "totalprice": {"$sum": "$modells.price"}}}])
-		// doc.append("totalPrice", orders.aggregate(Arrays.asList(Aggregates.match(
-		// 				Filters.eq("order", String.valueOf(orderNr))), 
-		// 				Aggregates.unwind("$modells"), 
-		// 				Aggregates.group("§order", Accumulators.sum("price", 1)),
-		// 				Aggregates.merge("orders"))));
-		ArrayList<Document> pipeline = new ArrayList<>();
-		pipeline.add(Document.parse("{$match: {'order': '" + orderNr + "'}}"));
-		pipeline.add(Document.parse("{$unwind: '$modells'}"));
-		pipeline.add(Document.parse("{$group: {_id: '$order', 'totalPrice': {$sum: 'modells.price'}}}"));
-		pipeline.add(Document.parse("{$merge: 'orders', on: 'order', whenMatched: 'replace', whenNotMatched: 'discard'}"));
-		mongoTemplate.getDb().getCollection("orders", Orders.class)
-			.aggregate(pipeline)
-			.toCollection();
-		orderNr++;
-	}
-
-	public static void updateAllOrders(List<Document> list) {
-		for (int i = 0; i < list.size(); i++) {
-			getSumOfOrder();
+		String customerId = "";
+		String orderId = "";
+		AggregateIterable<Document> customer = collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1)));
+		AggregateIterable<Document> order = orders.aggregate(Arrays.asList(Aggregates.sample(1)));
+		docCustomer = customer.first();
+		docOrder = order.first();
+		if (docCustomer != null) {
+			customerId = docCustomer.get("_id").toString();
 		}
+		if (docOrder != null) {
+			orderId = docOrder.get("_id").toString();
+		}
+		doc.append("invNr", String.valueOf(generateRndNr(0, 100000)))
+				.append("orderNr", String.valueOf(orderNr))
+				.append("customer", customerId)
+				.append("order", orderId);
+		orderNr++;
+		return doc;
 	}
 
 	public static String rName() {

@@ -1,7 +1,5 @@
 package com.example.demo.models;
 
-import java.util.ArrayList;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,26 +10,26 @@ public class Invoice {
     private String id;
     private String invNr;
     private String orderNr;
-    private ArrayList<Customer> customer;
-    private ArrayList<Orders> order;
+    private String customerId;
+    private String orderId;
 
-    public Invoice(String invNr, String orderNr, ArrayList<Customer> customer, ArrayList<Orders> order) {
+    public Invoice(String invNr, String orderNr, String customerId, String orderId) {
         this.invNr = invNr;
         this.orderNr = orderNr;
-        this.customer = customer;
-        this.order = order;
+        this.customerId = customerId;
+        this.orderId = orderId;
     }
 
     public Invoice() {
 
     }
 
-    public void setCustomer(ArrayList<Customer> customer) {
-        this.customer = customer;
+    public void setcustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
-    public ArrayList<Customer> getCustomer() {
-        return customer;
+    public String getcustomerId() {
+        return customerId;
     }
 
     public void setId(String id) {
@@ -50,20 +48,20 @@ public class Invoice {
         return invNr;
     }
 
-    public void setOrderNr(String orderNr) {
+    public void setorderNr(String orderNr) {
         this.orderNr = orderNr;
     }
 
-    public String getOrderNr() {
+    public String getorderIdNr() {
         return orderNr;
     }
 
-    public void setOrders(ArrayList<Orders> order) {
-        this.order = order;
+    public void setorderIds(String orderId) {
+        this.orderId = orderId;
     }
 
-    public ArrayList<Orders> getOrders() {
-        return order;
+    public String getorderIds() {
+        return orderId;
     }
 
 }
