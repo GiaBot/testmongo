@@ -3,9 +3,6 @@ package com.example.demo.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,20 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Repository.OrdersRepository;
 import com.example.demo.models.Orders;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 
 @RestController
 @RequestMapping("/api")
 public class OrdersController {
     
     final private OrdersRepository repository;
-    private MongoClient client = MongoClients.create(MongoClientSettings.builder()
-    .applyConnectionString(new ConnectionString("mongodb://mongoadmin:mongoadmin@localhost:27017/"))
-    .build());
-    private MongoTemplate mongoTemplate = new MongoTemplate(client, "Test");
 
     public OrdersController(OrdersRepository repository) {
         this.repository = repository;
@@ -48,19 +37,18 @@ public class OrdersController {
     }
 
     @GetMapping("nrModOfOrder")
-    public List<Orders> getOrdersByNrOfMod(@RequestParam String nr) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("nrModells").is(nr));
-        List<Orders> orders = mongoTemplate.find(query, Orders.class);
-        return orders;
+    public List<Orders> getOrdersByNrOfMod(@RequestParam int amount) {
+        return repository.getOrderByAmountModells(amount);
     }
 
     @GetMapping("orderNr")
-    public List<Orders> getOrdersByOrderNr(@RequestParam String nr) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("order").is(nr));
-        List<Orders> orders = mongoTemplate.find(query, Orders.class);
-        return orders;
+    public List<Orders> getOrdersByOrderNr(@RequestParam int order) {
+        return repository.getOrderByOrderNr(order);
+    }
+
+    @GetMapping("totalPrice/{id}")
+    public List<Orders> getTotalPriceById(@PathVariable String id) {
+        return repository.getTotalPriceById(id);
     }
 
     @DeleteMapping("deleteOrderId/{id}")
@@ -93,5 +81,4 @@ public class OrdersController {
         return repository.saveAll(orders);
     }
 
-    
 }

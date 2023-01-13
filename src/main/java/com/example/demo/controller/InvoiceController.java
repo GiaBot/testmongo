@@ -3,9 +3,6 @@ package com.example.demo.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,20 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Repository.InvoiceRepository;
 import com.example.demo.models.Invoice;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 
 @RestController
 @RequestMapping("/api")
 public class InvoiceController {
     
     private final InvoiceRepository repository;
-    private MongoClient client = MongoClients.create(MongoClientSettings.builder()
-    .applyConnectionString(new ConnectionString("mongodb://mongoadmin:mongoadmin@localhost:27017/"))
-    .build());
-    private MongoTemplate mongoTemplate = new MongoTemplate(client, "Test");
 
     InvoiceController(InvoiceRepository repository) {
         this.repository = repository;
@@ -48,35 +37,23 @@ public class InvoiceController {
     }
 
     @GetMapping("invoiceOrderId")
-    public List<Invoice> getInvoiceByOrder(@RequestParam String orderId) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("ordernr").is(orderId));
-        List<Invoice> invoice = mongoTemplate.find(query, Invoice.class);
-        return invoice;
+    public List<Invoice> getInvoiceByOrderId(@RequestParam String orderId) {
+        return repository.getInvByOrderId(orderId);
     }
 
     @GetMapping("invoiceInvNr")
-    public List<Invoice> getInvoiceByInvNr(@RequestParam String invNr) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("invnr").is(invNr));
-        List<Invoice> invoice = mongoTemplate.find(query, Invoice.class);
-        return invoice;
+    public List<Invoice> getInvoiceByInvNr(@RequestParam int invNr) {
+        return repository.getInvByInvNr(invNr);
     }
 
     @GetMapping("invoiceCustomerId/{customerId}")
     public List<Invoice> getInvoiceByCustomer(@PathVariable String customerId) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("customer.id").is(customerId));
-        List<Invoice> invoice = mongoTemplate.find(query, Invoice.class);
-        return invoice;
+        return repository.getInvByCustomerId(customerId);
     }
 
-    @GetMapping("invoiceOrderId/{modellId}")
-    public List<Invoice> getInvoiceByModel(@PathVariable String modellId) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("orders.id").is(modellId));
-        List<Invoice> invoice = mongoTemplate.find(query, Invoice.class);
-        return invoice;
+    @GetMapping("invoiceOrderNr")
+    public List<Invoice> getInvoiceByOrderNr(int orderNr) {
+        return repository.getInvByOrderNr(orderNr);
     }
 
     @DeleteMapping("deleteInvoice/{id}")
@@ -108,5 +85,4 @@ public class InvoiceController {
         return repository.saveAll(invoices);
     }
 
-    //TO-DO: Sum of the modells in the order
 }

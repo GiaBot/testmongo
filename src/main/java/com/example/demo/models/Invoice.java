@@ -8,12 +8,12 @@ public class Invoice {
     
     @Id
     private String id;
-    private String invNr;
-    private String orderNr;
+    private int invNr;
+    private int orderNr;
     private String customerId;
     private String orderId;
 
-    public Invoice(String invNr, String orderNr, String customerId, String orderId) {
+    public Invoice(int invNr, int orderNr, String customerId, String orderId) {
         this.invNr = invNr;
         this.orderNr = orderNr;
         this.customerId = customerId;
@@ -24,11 +24,11 @@ public class Invoice {
 
     }
 
-    public void setcustomerId(String customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
-    public String getcustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
@@ -40,27 +40,27 @@ public class Invoice {
         return id;
     }
 
-    public void setInvNr(String invNr) {
+    public void setInvNr(int invNr) {
         this.invNr = invNr;
     }
 
-    public String getInvNr() {
+    public int getInvNr() {
         return invNr;
     }
 
-    public void setorderNr(String orderNr) {
+    public void setOrderNr(int orderNr) {
         this.orderNr = orderNr;
     }
 
-    public String getorderIdNr() {
+    public int getOrderIdNr() {
         return orderNr;
     }
 
-    public void setorderIds(String orderId) {
+    public void setOrderIds(String orderId) {
         this.orderId = orderId;
     }
 
-    public String getorderIds() {
+    public String getOrderIds() {
         return orderId;
     }
 

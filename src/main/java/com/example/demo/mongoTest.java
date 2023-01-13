@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.AggregateIterable;
@@ -14,6 +15,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Updates;
 
 public class mongoTest {
 	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Socken", "Pullover", "Jacke" };
@@ -28,10 +30,10 @@ public class mongoTest {
 	static List<Document> customerList = new ArrayList<>();
 	static List<Document> invoiceList = new ArrayList<>();
 	static List<Document> modellsList = new ArrayList<>();
-	static Document test;
 	static Document order;
 	private static int key = 0;
 	private static int orderNr = 0;
+	private static float totalPrice = 0;
 	private static MongoClient mongoClient = MongoClients.create("mongodb://mongoadmin:mongoadmin@localhost:27017");
 	private static MongoDatabase database = mongoClient.getDatabase("Test");
 	private static MongoCollection<Document> collectionCustomer = database.getCollection("customners");
@@ -94,13 +96,16 @@ public class mongoTest {
 			Document doc = new Document();
 			AggregateIterable<Document> modellList = collection.aggregate(Arrays.asList(Aggregates.sample(nr)));
 			for (Document document : modellList) {
+				totalPrice += document.getDouble("price");
 				modellIds.add(document.get("_id").toString());
 			}
-			doc.append("amountModells", String.valueOf(nr));
-			doc.append("order", String.valueOf(key));
+			doc.append("amountModells", nr);
+			doc.append("order", key);
 			doc.append("modells", modellIds);
+			doc.append("totalPrice", totalPrice);
 			orderList.add(doc);
 			key++;
+			totalPrice = 0;
 		}
 	}
 
@@ -184,10 +189,10 @@ public class mongoTest {
 		if (docOrder != null) {
 			orderId = docOrder.get("_id").toString();
 		}
-		doc.append("invNr", String.valueOf(generateRndNr(0, 100000)))
-				.append("orderNr", String.valueOf(orderNr))
-				.append("customer", customerId)
-				.append("order", orderId);
+		doc.append("invNr", generateRndNr(0, 100000))
+				.append("orderNr", orderNr)
+				.append("customerId", customerId)
+				.append("orderId", orderId);
 		orderNr++;
 		return doc;
 	}

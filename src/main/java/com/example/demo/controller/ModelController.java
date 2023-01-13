@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +19,9 @@ import com.example.demo.models.Model;
 @RestController
 @RequestMapping("/api")
 public class ModelController {
-
+    
     private final ModelRepository repository;
-
+   
     ModelController(ModelRepository repository) {
         this.repository = repository;
     }
@@ -38,6 +39,11 @@ public class ModelController {
     @GetMapping("modelId/{id}")
     public Optional<Model> getModelById(@PathVariable String id) {
         return repository.findById(id);
+    }
+
+    @GetMapping("modelIds")
+    public List<Model> getModelByIds(@RequestBody List<ObjectId> ids) {
+        return repository.findModellsByIds(ids);
     }
 
     @GetMapping("modelAll")

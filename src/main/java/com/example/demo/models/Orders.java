@@ -10,25 +10,27 @@ public class Orders {
     
     @Id
     private String id;
-    private String amountModells;
-    private String order;
+    private int amountModells;
+    private int order;
     private ArrayList<String> modells;
+    private float totalPrice;
 
-    public Orders(String amountModells, String order, ArrayList<String> modells) {
+    public Orders(int amountModells, int order, ArrayList<String> modells, float totalPrice) {
         this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
+        this.totalPrice = totalPrice;
     }
 
     public Orders() {
 
     }
 
-    public String getOrder() {
+    public int getOrder() {
         return order;
     }
 
-    public void setOrder(String order) {
+    public void setOrder(int order) {
         this.order = order;
     }
 
@@ -48,12 +50,20 @@ public class Orders {
         this.modells = modells;
     }
 
-    public String getAmountModells() {
+    public int getAmountModells() {
         return amountModells;
     }
 
-    public void setAmountModells(String amountModells) {
+    public void setAmountModells(int amountModells) {
         this.amountModells = amountModells;
+    }
+
+    public float getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(float totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
 }
