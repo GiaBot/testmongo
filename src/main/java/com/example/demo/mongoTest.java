@@ -17,7 +17,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.UpdateResult;
 
 public class mongoTest {
 	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Socken", "Pullover", "Jacke" };
@@ -25,6 +24,7 @@ public class mongoTest {
 	static String[] sizes = { "S", "M", "L", "XL" };
 	static String[] colors = { "blue", "red", "green", "black", "grey" };
 	static String[] patterns = { "plain", "stripes" };
+	static String[] paymentMethods = {"PayPal", "Creditcard", "Bank transfer", "Real-time payment"};
 	private final static int MAX_MODELLS = 100;
 	private final static int MAX_ORDERS = 100;
 	static List<Document> list = new ArrayList<>();
@@ -44,14 +44,14 @@ public class mongoTest {
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
 
 	public static void main(String[] args) {
-		// collection.deleteMany(new Document());
-		// orders.deleteMany(new Document());
-		// collectionCustomer.deleteMany(new Document());
-		// invoices.deleteMany(new Document());
-		// connectMongoDbCustomer();
-		// connectMongoDb();
+		collection.deleteMany(new Document());
+		orders.deleteMany(new Document());
+		collectionCustomer.deleteMany(new Document());
+		invoices.deleteMany(new Document());
+		connectMongoDbCustomer();
+		connectMongoDb();
 		// updateModellPrices(2);
-		updateSizePrices(2);
+		// updateSizePrices(2);
 	}
 
 	public static void connectMongoDb() {
@@ -106,6 +106,7 @@ public class mongoTest {
 			doc.append("amountModells", nr);
 			doc.append("order", key);
 			doc.append("modells", modellIds);
+			doc.append("paymentMethod", rPaymentMethod());
 			doc.append("totalPrice", totalPrice);
 			orderList.add(doc);
 			key++;
@@ -252,6 +253,11 @@ public class mongoTest {
 	public static float rPrice() {
 		float price = generateRndNr(1, 100);
 		return price;
+	}
+
+	public static String rPaymentMethod() {
+		String paymentMethod = paymentMethods[generateRndNr(0, 4)];
+		return paymentMethod;
 	}
 
 	public static int generateRndNr(int low, int high) {

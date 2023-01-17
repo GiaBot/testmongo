@@ -51,6 +51,11 @@ public class OrdersController {
         return repository.getTotalPriceById(id);
     }
 
+    @GetMapping("paymentMethod")
+    public List<Orders> getOrderByPaymentMethod(@RequestParam String paymentMethod) {
+        return repository.getOrderByPaymentMethod(paymentMethod);
+    }
+
     @DeleteMapping("deleteOrderId/{id}")
     public void deleteByOrderId(@PathVariable String id) {
         repository.deleteById(id);

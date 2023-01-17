@@ -13,12 +13,14 @@ public class Orders {
     private int amountModells;
     private int order;
     private ArrayList<String> modells;
+    private String paymentMethod;
     private float totalPrice;
 
-    public Orders(int amountModells, int order, ArrayList<String> modells, float totalPrice) {
+    public Orders(int amountModells, int order, ArrayList<String> modells, String paymentMethod, float totalPrice) {
         this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
+        this.paymentMethod = paymentMethod;
         this.totalPrice = totalPrice;
     }
 
@@ -66,4 +68,12 @@ public class Orders {
         this.totalPrice = totalPrice;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+    
 }
