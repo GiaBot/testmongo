@@ -44,14 +44,14 @@ public class mongoTest {
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
 
 	public static void main(String[] args) {
-		collection.deleteMany(new Document());
-		orders.deleteMany(new Document());
-		collectionCustomer.deleteMany(new Document());
-		invoices.deleteMany(new Document());
-		connectMongoDbCustomer();
-		connectMongoDb();
+		// collection.deleteMany(new Document());
+		// orders.deleteMany(new Document());
+		// collectionCustomer.deleteMany(new Document());
+		// invoices.deleteMany(new Document());
+		// connectMongoDbCustomer();
+		// connectMongoDb();
 		// updateModellPrices(2);
-		// updateSizePrices(2);
+		updateSizePrices(2);
 	}
 
 	public static void connectMongoDb() {
@@ -122,8 +122,8 @@ public class mongoTest {
 
 	//TODO
 	public static void updateSizePrices(int multiplier) {
-		Bson query = Filters.gt("size.$[]", 0);
-		Bson update = Updates.mul("size.$[]",multiplier);
+		Bson query = Filters.gt("size.XL", 0);
+		Bson update = Updates.mul("size.XL",multiplier);
 		try {
 			collection.updateMany(query, update);
 		} catch (Exception e) {
@@ -131,6 +131,7 @@ public class mongoTest {
 	}
 
 	public static void updateModellPrices(int multiplier) {
+		
 		Bson query = Filters.gt("price", 0);
 		Bson update = Updates.mul("price",multiplier);
 		try {
