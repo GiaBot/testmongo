@@ -24,6 +24,7 @@ public interface OrdersRepository extends MongoRepository<Orders, String> {
     @Query("{ 'modells.?0': 'amount' }")
     List<Orders> getModellAmount(String modellId);
 
-    
+    @Query(value="{ '_id': ?0}", fields="{ 'modells': 1 }")
+    List<Orders> findModellsByIds(String id);
 
 }

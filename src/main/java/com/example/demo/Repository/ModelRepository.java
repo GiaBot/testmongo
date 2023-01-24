@@ -9,7 +9,7 @@ import com.example.demo.models.Model;
 
 public interface ModelRepository extends MongoRepository<Model, String> {
 
-    @Query("{ '_id': { '$in': ?0 } }")
+    @Query(value="{ '_id': ?0}", fields="{ 'modells': 1 }")
     List<Model> findModellsByIds(List<String> ids);
 
 }

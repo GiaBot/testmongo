@@ -78,6 +78,11 @@ public class OrdersController {
         return repository.getOrderByOrderNr(order);
     }
 
+    @GetMapping("modelIds/{id}")
+    public List<Orders> getModelByIds(@PathVariable String id) {
+        return repository.findModellsByIds(id);
+    }
+
     @GetMapping("totalPrice/{id}")
     public List<Orders> getTotalPriceById(@PathVariable String id) {
         return repository.getTotalPriceById(id);

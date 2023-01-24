@@ -57,11 +57,6 @@ public class ModelController {
         return repository.findById(id);
     }
 
-    @GetMapping("modelIds")
-    public List<Model> getModelByIds(@RequestBody List<String> ids) {
-        return repository.findModellsByIds(ids);
-    }
-
     @GetMapping("modelAll")
     public List<Model> getAllModels() {
         return repository.findAll();
