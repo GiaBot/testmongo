@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,15 +13,16 @@ public class Orders {
     private String id;
     private int amountModells;
     private int order;
-    private ArrayList<String> modells;
-    private String paymentMethod;
+    private ArrayList<Model> modells;
+    private boolean invoiced = false;
     private float totalPrice;
 
-    public Orders(int amountModells, int order, ArrayList<String> modells, String paymentMethod, float totalPrice) {
+    public Orders(int amountModells, int order, ArrayList<Model> modells, 
+                    boolean invoiced, float totalPrice) {
         this.amountModells = amountModells;
         this.order = order;
         this.modells = modells;
-        this.paymentMethod = paymentMethod;
+        this.invoiced = invoiced;
         this.totalPrice = totalPrice;
     }
 
@@ -44,11 +46,11 @@ public class Orders {
         this.id = id;
     }
 
-    public ArrayList<String> getModells() {
+    public ArrayList<Model> getModells() {
         return modells;
     }
 
-    public void setModells(ArrayList<String> modells) {
+    public void setModells(ArrayList<Model> modells) {
         this.modells = modells;
     }
 
@@ -67,13 +69,12 @@ public class Orders {
     public void setTotalPrice(float totalPrice) {
         this.totalPrice = totalPrice;
     }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
     
+    public boolean getInvoiced() {
+        return this.invoiced;
+    }
+
+    public void setInvoiced(boolean invoiced) {
+        this.invoiced = invoiced;
+    }
 }

@@ -21,4 +21,9 @@ public interface OrdersRepository extends MongoRepository<Orders, String> {
     @Query("{ 'paymentMethod': ?0 }")
     List<Orders> getOrderByPaymentMethod(String paymentMethod);
 
+    @Query("{ 'modells.?0': 'amount' }")
+    List<Orders> getModellAmount(String modellId);
+
+    
+
 }

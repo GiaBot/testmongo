@@ -2,13 +2,14 @@ package com.example.demo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBList;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -44,14 +45,14 @@ public class mongoTest {
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
 
 	public static void main(String[] args) {
-		// collection.deleteMany(new Document());
-		// orders.deleteMany(new Document());
-		// collectionCustomer.deleteMany(new Document());
-		// invoices.deleteMany(new Document());
-		// connectMongoDbCustomer();
-		// connectMongoDb();
+		collection.deleteMany(new Document());
+		orders.deleteMany(new Document());
+		collectionCustomer.deleteMany(new Document());
+		invoices.deleteMany(new Document());
+		connectMongoDbCustomer();
+		connectMongoDb();
 		// updateModellPrices(2);
-		updateSizePrices(2);
+		// updateSizePrices(2);
 	}
 
 	public static void connectMongoDb() {
@@ -96,17 +97,32 @@ public class mongoTest {
 	public static void createOrders() {
 		for (int i = 0; i < MAX_ORDERS; i++) {
 			int nr = generateRndNr(1, 11);
-			List<String> modellIds = new ArrayList<>();
+			int randomNr = generateRndNr(0, 2);
+			Double tempPrice = 0.0;
+			int amount = 0;
+			List<Document> newList = new ArrayList<>();
 			Document doc = new Document();
+			// HashMap<String, Integer> modells = new HashMap<>();
 			AggregateIterable<Document> modellList = collection.aggregate(Arrays.asList(Aggregates.sample(nr)));
 			for (Document document : modellList) {
-				totalPrice += document.getDouble("price");
-				modellIds.add(document.get("_id").toString());
+				amount = generateRndNr(1, 10);
+				tempPrice = document.getDouble("price");
+				// modellIds.add(document.get("_id").toString());
+				// modells.put(document.get("_id").toString(), amount);
+				tempPrice *= amount;
+				totalPrice += tempPrice;
+				List<Document> size = (List<Document>) document.get("size");
+				List<Document> color = (List<Document>) document.get("color");
+				// document.remove("size");
+				document.put("size", size.get(randomNr));
+				document.put("color", color.get(randomNr));
+				document.append("amount", amount);
+				newList.add(document);
 			}
 			doc.append("amountModells", nr);
 			doc.append("order", key);
-			doc.append("modells", modellIds);
-			doc.append("paymentMethod", rPaymentMethod());
+			doc.append("modells", newList);
+			doc.append("invoiced", false);
 			doc.append("totalPrice", totalPrice);
 			orderList.add(doc);
 			key++;
@@ -120,18 +136,7 @@ public class mongoTest {
 		}
 	}
 
-	//TODO
-	public static void updateSizePrices(int multiplier) {
-		Bson query = Filters.gt("size.XL", 0);
-		Bson update = Updates.mul("size.XL",multiplier);
-		try {
-			collection.updateMany(query, update);
-		} catch (Exception e) {
-		}
-	}
-
 	public static void updateModellPrices(int multiplier) {
-		
 		Bson query = Filters.gt("price", 0);
 		Bson update = Updates.mul("price",multiplier);
 		try {
@@ -159,28 +164,25 @@ public class mongoTest {
 	}
 
 	public static Document randomDoc(Document doc) {
-		String sizeOne = rSize();
-		String sizeTwo = rSize();
-		String colorOne = rColor();
-		String colorTwo = rColor();
+		BasicDBList sizes = new BasicDBList();
+		sizes.add(rSize());
+		sizes.add(noDuplicateSize(sizes.get(0).toString(), rSize()));
+		BasicDBList colors = new BasicDBList();
+		colors.add(rColor());
+		colors.add(noDuplicateColor(colors.get(0).toString(), rColor()));
 		float priceOne = rPrice();
 		float priceTwo = rPrice();
 		float sum = priceOne + priceTwo;
 		int r = generateRndNr(0, 3);
 		switch (r) {
 			case 0:
-				doc.append("size", new BasicDBObject(sizeOne, priceOne)
-						.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo));
+				doc.append("size", sizes);
 			case 1:
-				doc.append("size", new BasicDBObject(sizeOne, priceOne)
-						.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
-						.append("color", new BasicDBObject(sizeOne, colorOne)
-								.append(sizeTwo, colorTwo));
+				doc.append("size", sizes)
+						.append("color", colors);
 			case 2:
-				doc.append("size", new BasicDBObject(sizeOne, priceOne)
-						.append(noDuplicateSize(sizeOne, sizeTwo), priceTwo))
-						.append("color", new BasicDBObject(sizeOne, colorOne)
-								.append(sizeTwo, colorTwo))
+				doc.append("size", sizes)
+						.append("color", colors)
 						.append("pattern", rPattern());
 		}
 		doc.append("price", sum);
@@ -212,12 +214,14 @@ public class mongoTest {
 			customerId = docCustomer.get("_id").toString();
 		}
 		if (docOrder != null) {
+			docOrder.put("invoiced", true);
 			orderId = docOrder.get("_id").toString();
 		}
 		doc.append("invNr", generateRndNr(0, 100000))
 				.append("orderNr", orderNr)
 				.append("customerId", customerId)
-				.append("orderId", orderId);
+				.append("orderId", orderId)
+				.append("paymentMethod", rPaymentMethod());
 		orderNr++;
 		return doc;
 	}

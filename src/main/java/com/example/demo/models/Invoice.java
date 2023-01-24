@@ -12,11 +12,13 @@ public class Invoice {
     private int orderNr;
     private String customerId;
     private String orderId;
+    private String paymentMethod;
 
-    public Invoice(int invNr, int orderNr, String customerId, String orderId) {
+    public Invoice(int invNr, int orderNr, String customerId, String paymentMethod, String orderId) {
         this.invNr = invNr;
         this.orderNr = orderNr;
         this.customerId = customerId;
+        this.paymentMethod = paymentMethod;
         this.orderId = orderId;
     }
 
@@ -52,15 +54,23 @@ public class Invoice {
         this.orderNr = orderNr;
     }
 
-    public int getOrderIdNr() {
+    public int getOrderNr() {
         return orderNr;
     }
 
-    public void setOrderIds(String orderId) {
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
-    public String getOrderIds() {
+    public String getOrderId() {
         return orderId;
     }
 

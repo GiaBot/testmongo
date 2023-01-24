@@ -1,12 +1,16 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,10 +88,10 @@ public class ModelController {
     }
 
     @PutMapping("updatePrices")
-    public void updatePrice(@RequestParam String size, @RequestParam float multiplier) {
+    public void updatePrice(@RequestParam float multiplier) {
         AggregationUpdate update = Aggregation.newUpdate()
-            .set("size." + size)
-            .toValue(ArithmeticOperators.valueOf("size." + size)
+            .set("price")
+            .toValue(ArithmeticOperators.valueOf("price")
             .multiplyBy(multiplier));
 
         mongoTemplate.update(Model.class)
@@ -95,11 +99,17 @@ public class ModelController {
             .all();
     }
 
-    @PutMapping("updateTotalPrice")
-    public void updateTotalPrice() {
+    @PutMapping("updatePrice/{id}")
+    public void updatePriceOfId(@PathVariable String id, @RequestParam float multiplier) {
         AggregationUpdate update = Aggregation.newUpdate()
-            .set("totalPrice")
-            .toValue(ArithmeticOperators.valueOf("size.$[]")
-            .add(""));
+            .set("price")
+            .toValue(ArithmeticOperators.valueOf("price")
+            .multiplyBy(multiplier));
+        
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+
+        mongoTemplate.findAndModify(query, update, Model.class);
     }
+
 }
