@@ -1,7 +1,6 @@
 package com.example.demo.models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -77,4 +76,5 @@ public class Orders {
     public void setInvoiced(boolean invoiced) {
         this.invoiced = invoiced;
     }
+
 }

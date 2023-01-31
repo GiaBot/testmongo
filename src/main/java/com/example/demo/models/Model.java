@@ -1,12 +1,9 @@
 package com.example.demo.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-//TODO Optimize schema of this collection
 
 @Document(collection = "modells")
 public class Model {
