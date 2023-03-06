@@ -29,6 +29,14 @@ public interface OrdersRepository extends MongoRepository<Orders, String> {
     @Query(value="{ '_id': ?0}", fields="{ 'modells': 1, '_id': 1}")
     List<Orders> getModellsByIds(String id);
 
+    @Query("{ '_id': ?0 }")
+    @Update("{ $set: { ?1: ?2 } }")
+    void findAndUpdateOrdersById(String id, String key, String value);
+
+    @Query("{}")
+    @Update("{$set: {'modells.price': 'schemalessModel.price'}}")
+    void updateOrderPrices();
+
     // @Aggregation("{$group: {_id : $_id, totalPrice: {$sum: $multiply: [$modells.price, $modells.amount]}}}")
     // List<Orders> updatePrice(String id);
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.bson.Document;
@@ -20,14 +21,17 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
 public class mongoTest {
-	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Socken", "Pullover", "Jacke" };
+	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Pullover" };
 	static String[] saisons = { "spring", "summer", "winter", "fall" };
 	static String[] sizes = { "S", "M", "L", "XL" };
-	static String[] colors = { "blue", "red", "green", "black", "grey" };
-	static String[] patterns = { "plain", "stripes" };
+	static String[] colors = { "blue", "red", "green", "black"};
+	static String[] patterns = { "plain", "stripes", "dots", "picture" };
+	static String[] fits = {"oversized", "slim", "regular", "skinny"};
 	static String[] paymentMethods = {"PayPal", "Creditcard", "Bank transfer", "Real-time payment"};
-	private final static int MAX_MODELLS = 100;
-	private final static int MAX_ORDERS = 100;
+	static String[] keys = {"type", "color", "size", "print", "fit"};
+	static Map<String, List<String>> additionalData;
+	private final static int MAX_MODELLS = 100000;
+	private final static int MAX_ORDERS = 100000;
 	static List<Document> list = new ArrayList<>();
 	static List<Document> orderList = new ArrayList<>();
 	static List<Document> customerList = new ArrayList<>();
@@ -43,16 +47,26 @@ public class mongoTest {
 	private static MongoCollection<Document> collection = database.getCollection("modells");
 	private static MongoCollection<Document> orders = database.getCollection("orders");
 	private static MongoCollection<Document> invoices = database.getCollection("invoices");
+	private static MongoCollection<Document> schemalessModells = database.getCollection("schemalessModel");
+	private static MongoCollection<Document> schemalessOrders = database.getCollection("schemalessOrder");
+	private static MongoCollection<Document> schemalessCustomer = database.getCollection("schemalessCustomer");
 
 	public static void main(String[] args) {
-		collection.deleteMany(new Document());
-		orders.deleteMany(new Document());
-		collectionCustomer.deleteMany(new Document());
+		// collection.deleteMany(new Document());
+		// orders.deleteMany(new Document());
+		// collectionCustomer.deleteMany(new Document());
 		invoices.deleteMany(new Document());
-		connectMongoDbCustomer();
-		connectMongoDb();
+		// connectMongoDbCustomer();
+		// connectMongoDb();
 		// updateModellPrices(2);
 		// updateSizePrices(2);
+		schemalessModells.deleteMany(new Document());
+		schemalessOrders.deleteMany(new Document());
+		schemalessModells.insertMany(createSchemalessModel());
+		createSchemalessOrders();
+		schemalessOrders.insertMany(orderList);
+		createInvoices();
+		invoices.insertMany(invoiceList);
 	}
 
 	public static void connectMongoDb() {
@@ -64,12 +78,6 @@ public class mongoTest {
 		orders.insertMany(orderList);
 		createInvoices();
 		invoices.insertMany(invoiceList);
-
-		// for(int i = 0; i < MAX_ORDERS; i++) {
-		// AggregateIterable<Document> test =
-		// collection.aggregate(Arrays.asList(Aggregates.sample(generateRndNr(1, 11)),
-		// Aggregates.out("orders")));
-		// }
 
 	}
 
@@ -123,8 +131,47 @@ public class mongoTest {
 			doc.append("order", key);
 			doc.append("modells", newList);
 			doc.append("invoiced", false);
-			doc.append("totalPrice", totalPrice);
 			orderList.add(doc);
+			key++;
+			totalPrice = 0;
+		}
+	}
+
+	public static void createSchemalessOrders() {
+		for (int i = 0; i < MAX_ORDERS; i++) {
+			int nr = generateRndNr(1, 11);
+			Double tempPrice = 0.0;
+			int amount = 0;
+			List<Document> newList = new ArrayList<>();
+			Document doc = new Document();
+			Document newDoc = new Document();
+			Map<String, Object> modells;
+			AggregateIterable<Document> modellList = schemalessModells.aggregate(Arrays.asList(Aggregates.sample(nr)));
+			for (Document document : modellList) {
+				Document tempDoc = new Document();
+				int randomNr = generateRndNr(0, 2);
+				amount = generateRndNr(1, 10);
+				tempPrice = document.getDouble("price");
+				doc = (Document) document.get("additionalData");
+				List<Object> size = (List<Object>) doc.get("sizes");
+				List<Object> color = (List<Object>) doc.get("colors");
+				List<Object> fit = (List<Object>) doc.get("fits");
+				List<Object> print = (List<Object>) doc.get("prints");
+				List<Object> type = (List<Object>) doc.get("types");
+				tempDoc.put("_id", document.get("_id"));
+				tempDoc.append("type", type.get(randomNr));
+				tempDoc.append("color", color.get(randomNr));
+				tempDoc.append("size", size.get(randomNr));
+				tempDoc.append("fit", fit.get(randomNr));
+				tempDoc.append("print", print.get(randomNr));
+				tempDoc.append("price", tempPrice);
+				tempDoc.append("amount", amount);
+				newList.add(tempDoc);
+			}
+			newDoc.append("orderNr", key);
+			newDoc.append("modells", newList);
+			newDoc.append("totalPrice", totalPrice);
+			orderList.add(newDoc);
 			key++;
 			totalPrice = 0;
 		}
@@ -189,6 +236,40 @@ public class mongoTest {
 		return doc;
 	}
 
+	public static List<Document> createSchemalessModel() {
+		List<Document> documents = new ArrayList<>();
+		for (int i = 0; i < MAX_MODELLS; i++) {
+			additionalData = new HashMap<>();
+			List<String> type = new ArrayList<>();
+			type.add(rType());
+			type.add(rType());
+			List<String> colors = new ArrayList<>();
+			colors.add(rColor());
+			colors.add(rColor());
+			List<String> sizes = new ArrayList<>();
+			sizes.add(rSize());
+			sizes.add(rSize());
+			List<String> fits = new ArrayList<>();
+			fits.add(rFit());
+			fits.add(rFit());
+			List<String> prints = new ArrayList<>();
+			prints.add(rPattern());
+			prints.add(rPattern());
+			additionalData.put("types", type);
+			additionalData.put("colors", colors);
+			additionalData.put("sizes", sizes);
+			additionalData.put("fits", fits);
+			additionalData.put("prints", prints);
+			Document modell = new Document();
+			modell.append("name", randomString());
+			modell.append("season", rSaison());
+			modell.append("price", rPrice());
+			modell.append("additionalData", additionalData);
+			documents.add(modell);
+		}
+		return documents;
+	}
+
 	public static Document createCustomers() {
 		Document doc = new Document();
 		doc.append("firstName", randomString())
@@ -203,20 +284,38 @@ public class mongoTest {
 	public static Document createInvoice() {
 		Document docCustomer = new Document();
 		Document docOrder = new Document();
+		Document docSchemalessCust = new Document();
+		Document docSchemalessOrd = new Document();
 		Document doc = new Document();
 		String customerId = "";
 		String orderId = "";
-		AggregateIterable<Document> customer = collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1)));
-		AggregateIterable<Document> order = orders.aggregate(Arrays.asList(Aggregates.sample(1)));
-		docCustomer = customer.first();
-		docOrder = order.first();
-		if (docCustomer != null) {
-			customerId = docCustomer.get("_id").toString();
+		// AggregateIterable<Document> customer = collectionCustomer.aggregate(Arrays.asList(Aggregates.sample(1)));
+		// AggregateIterable<Document> order = orders.aggregate(Arrays.asList(Aggregates.sample(1)));
+		// docCustomer = customer.first();
+		// docOrder = order.first();
+		// if (docCustomer != null) {
+		// 	customerId = docCustomer.get("_id").toString();
+		// }
+		// if (docOrder != null) {
+		// 	docOrder.put("invoiced", true);
+		// 	orderId = docOrder.get("_id").toString();
+		// }
+
+		//Schemaless
+		AggregateIterable<Document> schemalessCust = schemalessCustomer.aggregate(Arrays.asList(Aggregates.sample(1)));
+		AggregateIterable<Document> schemalessOrd = schemalessOrders.aggregate(Arrays.asList(Aggregates.sample(1)));
+		docSchemalessCust = schemalessCust.first();
+		docSchemalessOrd = schemalessOrd.first();
+		if (docSchemalessCust != null) {
+			customerId = docSchemalessCust.get("_id").toString();
 		}
-		if (docOrder != null) {
-			docOrder.put("invoiced", true);
-			orderId = docOrder.get("_id").toString();
+		if (docSchemalessOrd != null) {
+			docSchemalessOrd.put("invoiced", true);
+			orderId = docSchemalessOrd.get("_id").toString();
 		}
+
+
+
 		doc.append("invNr", generateRndNr(0, 100000))
 				.append("orderNr", orderNr)
 				.append("customerId", customerId)
@@ -231,8 +330,13 @@ public class mongoTest {
 	}
 
 	public static String rType() {
-		String type = types[generateRndNr(0, 6)];
+		String type = types[generateRndNr(0, 4)];
 		return type;
+	}
+
+	public static String rFit() {
+		String fit = fits[generateRndNr(0, 4)];
+		return fit;
 	}
 
 	public static String rSaison() {
@@ -246,12 +350,12 @@ public class mongoTest {
 	}
 
 	public static String rColor() {
-		String color = colors[generateRndNr(0, 5)];
+		String color = colors[generateRndNr(0, 4)];
 		return color;
 	}
 
 	public static String rPattern() {
-		String pattern = patterns[generateRndNr(0, 2)];
+		String pattern = patterns[generateRndNr(0, 4)];
 		return pattern;
 	}
 

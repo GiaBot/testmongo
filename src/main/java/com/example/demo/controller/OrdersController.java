@@ -123,6 +123,11 @@ public class OrdersController {
 
     }
 
+    @PutMapping("test/{id}")
+    public void updateOrder(@PathVariable String id, @RequestParam String key, @RequestParam String value) {
+        repository.findAndUpdateOrdersById(id, key, value);
+    }
+
     @PutMapping("updateTotalPrice/{id}")
     public void updateTotalPriceById(@PathVariable ObjectId id) {
 
