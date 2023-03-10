@@ -20,6 +20,10 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
+/*
+ * Class for generating random Documents
+ */
+
 public class mongoTest {
 	static String[] types = { "T-Shirt", "Hemd", "Jeans", "Pullover" };
 	static String[] saisons = { "spring", "summer", "winter", "fall" };

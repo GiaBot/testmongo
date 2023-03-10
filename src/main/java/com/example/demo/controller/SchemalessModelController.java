@@ -85,34 +85,3 @@ public class SchemalessModelController {
     }
 
 }
-/*
-                 double price = 0;
-                double oPrice = 0;
-                int amount = 0;
-                ObjectId id;
-                FindIterable<Document> orderList;
-                ArrayList<Document> testOrder = new ArrayList<>();
-                FindIterable<Document> list = model.find(Filters.gt("price", 0));
-                for (Document document : list) {
-                        oPrice = document.getDouble("price");
-                        id = document.getObjectId("_id");
-                        orderList = order.find(Filters.eq("modells._id", id));
-                        for (Document document2 : orderList) {
-                                List<Document> test = (List<Document>) document2.get("modells");
-                                for (int i = 0; i < test.size(); i++) {
-                                        if (!test.get(i).getObjectId("_id").equals(id)) {
-                                                continue;
-                                        } else {
-                                                price = oPrice;
-                                                amount = test.get(i).getInteger("amount");
-                                                price *= amount;
-                                                test.get(i).put("price", price);
-                                        }
-                                }
-                                document2.put("modells", test);
-                                testOrder.add(document2);
-                        }
-                }
-                order.deleteMany(new Document());
-                order.insertMany(testOrder);
- */

@@ -2,7 +2,6 @@ package com.example.demo.Repository;
 
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
@@ -36,17 +35,5 @@ public interface OrdersRepository extends MongoRepository<Orders, String> {
     @Query("{}")
     @Update("{$set: {'modells.price': 'schemalessModel.price'}}")
     void updateOrderPrices();
-
-    // @Aggregation("{$group: {_id : $_id, totalPrice: {$sum: $multiply: [$modells.price, $modells.amount]}}}")
-    // List<Orders> updatePrice(String id);
-
-    // @Aggregation("{$match: {'_id': ObjectId(?0)}},{$unwind: '$modells'}," +
-    //             "{$set: {'modells.price': {$multiply: ['$modells.price','$modells.amount']}}}," +
-    //             "{$group: {'_id': '$_id', 'totalPrice': {$sum: '$modells.price'}}}")
-    // void findAndUpdateModelPriceById(String id);
-
-    // @Query("{ '_id': ?0 }")
-    // @Update(pipeline="{'$set': 'totalPrice': {'$sum': {'$modells.price'}}}")
-    // void findAndUpdatePriceById(String id);
 
 }

@@ -30,11 +30,9 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 
-import static com.mongodb.client.model.Accumulators.*;
 import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Projections.*;
-import static com.mongodb.client.model.Sorts.*;
+
 
 
 @RestController
@@ -158,33 +156,6 @@ public class OrdersController {
                 Accumulators.sum("totalPrice", "$modells.price")),
             Aggregates.merge("orders")
         )).forEach(doc -> System.out.println(doc.toJson(JsonWriterSettings.builder().indent(true).build())));
-
-    }
-
-    public void updateTotalPrice(String id) {
-       /**
-        * db.orders.aggregate({$match: {"_id": ObjectId("63cf847b55ac536f07642946") ,
-        "modells.price": {$gt: 0}}},{$unwind: "$modells"},
-        {$group: {"_id": null, "totalPrice": {$sum: "$modells.price"}}}),
-        {$merge: {into: "orders", on: ObjectId("63cf847b55ac536f07642946"), 
-        whenMatched: "replace", whenNotMatched: "discard"}}
-
-        db.orders.aggregate({$match: {"_id": ObjectId("63cf847b55ac536f07642959")}},
-        {$unwind: "$modells"},{$set: 
-        {"modells.price": {$multiply: ["$modells.price","$modells.amount"]}}}
-        */
-        // Bson group = group(new BsonNull(), sum("totalPrice", "$modells.price"));
-        // Bson merge = merge("orders");
-
-        // List<Document> test = orders.aggregate(Arrays.asList(match, unwind, group, merge)).into(new ArrayList<>());
-
-        // test.forEach(doc -> System.out.println(doc.toJson(JsonWriterSettings.builder().indent(true).build())));
-        
-
-
-    }
-
-    public void updateOnPrice() {
 
     }
 
