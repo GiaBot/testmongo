@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
+// Name of the collection
 @Document("schemalessModel")
 public class SchemalessModel {
     
@@ -17,6 +18,7 @@ public class SchemalessModel {
     private String name;
     private String season;
     private float price;
+    //Array for more Model information
     private Map<String, String[]> additionalData;
     
     public SchemalessModel(ObjectId id, String name, String season, float price, Map<String, String[]> additionalData) {
@@ -63,12 +65,12 @@ public class SchemalessModel {
     }
 
     @JsonAnyGetter
-    public Map<String, String[]> getadditionalData() {
+    public Map<String, String[]> getAdditionalData() {
         return additionalData;
     }
 
     @JsonAnySetter
-    public void setadditionalData(Map<String, String[]> additionalData) {
+    public void setAdditionalData(Map<String, String[]> additionalData) {
         this.additionalData = additionalData;
     }
 
